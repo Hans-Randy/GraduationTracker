@@ -12,14 +12,14 @@ namespace GraduationTracker.Tests.Unit
     {
         IGraduationTracker _tracker;
         Diploma _diploma;
-        IStudentRepository _studentRepository;
+        IRepository<Student> _studentRepository;
 
         [TestInitialize]
         public void TestInitialize()
         {
             _studentRepository = new StudentRepository();
-            var diplomaRepository = new DiplomaRepository();
-            var requirementRepository = new RequirementRepository();
+            IRepository<Diploma> diplomaRepository = new DiplomaRepository();
+            IRepository<Requirement> requirementRepository = new RequirementRepository();
 
             _diploma = diplomaRepository.GetAll().First();
             _tracker = new Services.GraduationTracker(diplomaRepository, requirementRepository, _studentRepository);

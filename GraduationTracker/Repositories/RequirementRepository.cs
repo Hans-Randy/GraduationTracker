@@ -8,7 +8,7 @@ namespace GraduationTracker.Repositories
     /// <summary>
     /// Represents a repository for managing requirements.
     /// </summary>
-    public class RequirementRepository : IRequirementRepository
+    public class RequirementRepository : IRepository<Requirement>
     {
         private readonly List<Requirement> _requirements;
 

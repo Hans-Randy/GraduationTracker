@@ -8,7 +8,7 @@ namespace GraduationTracker.Repositories
     /// <summary>
     /// Represents a repository for managing diplomas.
     /// </summary>
-    public class DiplomaRepository : IDiplomaRepository
+    public class DiplomaRepository : IRepository<Diploma>
     {
         private readonly List<Diploma> _diplomas;
 

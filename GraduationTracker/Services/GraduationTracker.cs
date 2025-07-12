@@ -10,9 +10,9 @@ namespace GraduationTracker.Services
     /// </summary>
     public partial class GraduationTracker : IGraduationTracker
     {
-        private readonly IDiplomaRepository _diplomaRepository;
-        private readonly IRequirementRepository _requirementRepository;
-        private readonly IStudentRepository _studentRepository;
+        private readonly IRepository<Diploma> _diplomaRepository;
+        private readonly IRepository<Requirement> _requirementRepository;
+        private readonly IRepository<Student> _studentRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="GraduationTracker"/> class.
@@ -21,9 +21,9 @@ namespace GraduationTracker.Services
         /// <param name="requirementRepository">The requirement repository.</param>
         /// <param name="studentRepository">The student repository.</param>
         public GraduationTracker(
-            IDiplomaRepository diplomaRepository, 
-            IRequirementRepository requirementRepository, 
-            IStudentRepository studentRepository)
+            IRepository<Diploma> diplomaRepository, 
+            IRepository<Requirement> requirementRepository, 
+            IRepository<Student> studentRepository)
         {
             _diplomaRepository = diplomaRepository;
             _requirementRepository = requirementRepository;
