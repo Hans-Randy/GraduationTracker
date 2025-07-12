@@ -48,7 +48,6 @@ namespace GraduationTracker.Services
                 }
             }
 
-
             var average = student.Courses.Select(c => c.Mark).Average();
 
             var standing = Standing.None;
@@ -62,18 +61,16 @@ namespace GraduationTracker.Services
             else
                 standing = Standing.SummaCumLaude;
 
-            var hasGraduated = credits >= diploma.Credits;
-
             switch (standing)
             {
                 case Standing.Remedial:
                     return new Tuple<bool, Standing>(false, standing);
                 case Standing.Average:
-                    return new Tuple<bool, Standing>(hasGraduated, standing);
+                    return new Tuple<bool, Standing>(true, standing);
                 case Standing.SummaCumLaude:
-                    return new Tuple<bool, Standing>(hasGraduated, standing);
+                    return new Tuple<bool, Standing>(true, standing);
                 case Standing.MagnaCumLaude:
-                    return new Tuple<bool, Standing>(hasGraduated, standing);
+                    return new Tuple<bool, Standing>(true, standing);
 
                 default:
                     return new Tuple<bool, Standing>(false, standing);

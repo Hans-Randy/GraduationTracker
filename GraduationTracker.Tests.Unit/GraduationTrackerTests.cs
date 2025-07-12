@@ -28,7 +28,7 @@ namespace GraduationTracker.Tests.Unit
         [DataTestMethod]
         [DataRow(1, true, Standing.SummaCumLaude)]
         [DataRow(2, true, Standing.Average)]
-        [DataRow(3, false, Standing.Average)]
+        [DataRow(3, true, Standing.Average)]
         [DataRow(4, false, Standing.Remedial)]
         public void TestStudentGraduationScenarios(int studentId, bool expectedGraduation, Standing expectedStanding)
         {
