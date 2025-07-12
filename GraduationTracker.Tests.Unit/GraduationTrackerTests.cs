@@ -10,58 +10,33 @@ namespace GraduationTracker.Tests.Unit
     [TestClass]
     public class GraduationTrackerTests
     {
-        IGraduationTracker tracker;
-        Diploma diploma;
-        Requirement[] requirements;
-        Student[] students;
+        IGraduationTracker _tracker;
+        Diploma _diploma;
+        IStudentRepository _studentRepository;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            var studentRepository = new StudentRepository();
+            _studentRepository = new StudentRepository();
             var diplomaRepository = new DiplomaRepository();
             var requirementRepository = new RequirementRepository();
 
-            diploma = diplomaRepository.GetAll().First();
-            requirements = requirementRepository.GetAll().ToArray();
-            students = studentRepository.GetAll().ToArray();
-
-            tracker = new Services.GraduationTracker(diplomaRepository, requirementRepository, studentRepository);
+            _diploma = diplomaRepository.GetAll().First();
+            _tracker = new Services.GraduationTracker(diplomaRepository, requirementRepository, _studentRepository);
         }
 
-        [TestMethod]
-        public void TestHasAllCredits()
+        [DataTestMethod]
+        [DataRow(1, true, Standing.SummaCumLaude)]
+        [DataRow(2, true, Standing.Average)]
+        [DataRow(3, false, Standing.Average)]
+        [DataRow(4, false, Standing.Remedial)]
+        public void TestStudentGraduationScenarios(int studentId, bool expectedGraduation, Standing expectedStanding)
         {
-            var student = students.First(s => s.Id == 1);
-            var result = tracker.HasGraduated(diploma, student);
-            Assert.IsTrue(result.Item1);
-        }
+            var student = _studentRepository.GetById(studentId);
+            var result = _tracker.HasGraduated(_diploma, student);
 
-        [TestMethod]
-        public void TestIsAverage()
-        {
-            var student = students.First(s => s.Id == 2);
-            var result = tracker.HasGraduated(diploma, student);
-            Assert.IsTrue(result.Item1);
-            Assert.IsTrue(result.Item2 == Standing.Average);
-        }
-
-        [TestMethod]
-        public void TestIsRemedial()
-        {
-            var student = students.First(s => s.Id == 4);
-            var result = tracker.HasGraduated(diploma, student);
-            Assert.IsFalse(result.Item1);
-            Assert.IsTrue(result.Item2 == Standing.Remedial);
-        }
-
-        [TestMethod]
-        public void TestIsSummaCumLaude()
-        {
-            var student = students.First(s => s.Id == 1);
-            var result = tracker.HasGraduated(diploma, student);
-            Assert.IsTrue(result.Item1);
-            Assert.IsTrue(result.Item2 == Standing.SummaCumLaude);
+            Assert.AreEqual(expectedGraduation, result.Item1);
+            Assert.AreEqual(expectedStanding, result.Item2);
         }
     }
 }
