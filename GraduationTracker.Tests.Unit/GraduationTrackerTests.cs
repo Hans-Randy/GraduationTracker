@@ -1,88 +1,67 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.Collections.Generic;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Linq;
+using GraduationTracker.Models;
+using GraduationTracker.Services;
+using GraduationTracker.Repositories;
+using GraduationTracker.Interfaces;
 
 namespace GraduationTracker.Tests.Unit
 {
     [TestClass]
     public class GraduationTrackerTests
     {
-        [TestMethod]
-        public void TestHasCredits()
+        IGraduationTracker tracker;
+        Diploma diploma;
+        Requirement[] requirements;
+        Student[] students;
+
+        [TestInitialize]
+        public void TestInitialize()
         {
-            var tracker = new GraduationTracker();
+            var studentRepository = new StudentRepository();
+            var diplomaRepository = new DiplomaRepository();
+            var requirementRepository = new RequirementRepository();
 
-            var diploma = new Diploma
-            {
-                Id = 1,
-                Credits = 4,
-                Requirements = new int[] { 100, 102, 103, 104 }
-            };
+            diploma = diplomaRepository.GetAll().First();
+            requirements = requirementRepository.GetAll().ToArray();
+            students = studentRepository.GetAll().ToArray();
 
-            var students = new[]
-            {
-               new Student
-               {
-                   Id = 1,
-                   Courses = new Course[]
-                   {
-                        new Course{Id = 1, Name = "Math", Mark=95 },
-                        new Course{Id = 2, Name = "Science", Mark=95 },
-                        new Course{Id = 3, Name = "Literature", Mark=95 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=95 }
-                   }
-               },
-               new Student
-               {
-                   Id = 2,
-                   Courses = new Course[]
-                   {
-                        new Course{Id = 1, Name = "Math", Mark=80 },
-                        new Course{Id = 2, Name = "Science", Mark=80 },
-                        new Course{Id = 3, Name = "Literature", Mark=80 },
-                        new Course{Id = 4, Name = "Physichal Education", Mark=80 }
-                   }
-               },
-            new Student
-            {
-                Id = 3,
-                Courses = new Course[]
-                {
-                    new Course{Id = 1, Name = "Math", Mark=50 },
-                    new Course{Id = 2, Name = "Science", Mark=50 },
-                    new Course{Id = 3, Name = "Literature", Mark=50 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=50 }
-                }
-            },
-            new Student
-            {
-                Id = 4,
-                Courses = new Course[]
-                {
-                    new Course{Id = 1, Name = "Math", Mark=40 },
-                    new Course{Id = 2, Name = "Science", Mark=40 },
-                    new Course{Id = 3, Name = "Literature", Mark=40 },
-                    new Course{Id = 4, Name = "Physichal Education", Mark=40 }
-                }
-            }
-
-
-            //tracker.HasGraduated()
-        };
-            
-            var graduated = new List<Tuple<bool, STANDING>>();
-
-            foreach(var student in students)
-            {
-                graduated.Add(tracker.HasGraduated(diploma, student));      
-            }
-
-            
-            Assert.IsFalse(graduated.Any());
-
+            tracker = new Services.GraduationTracker(diplomaRepository, requirementRepository, studentRepository);
         }
 
+        [TestMethod]
+        public void TestHasAllCredits()
+        {
+            var student = students.First(s => s.Id == 1);
+            var result = tracker.HasGraduated(diploma, student);
+            Assert.IsTrue(result.Item1);
+        }
 
+        [TestMethod]
+        public void TestIsAverage()
+        {
+            var student = students.First(s => s.Id == 2);
+            var result = tracker.HasGraduated(diploma, student);
+            Assert.IsTrue(result.Item1);
+            Assert.IsTrue(result.Item2 == Standing.Average);
+        }
+
+        [TestMethod]
+        public void TestIsRemedial()
+        {
+            var student = students.First(s => s.Id == 4);
+            var result = tracker.HasGraduated(diploma, student);
+            Assert.IsFalse(result.Item1);
+            Assert.IsTrue(result.Item2 == Standing.Remedial);
+        }
+
+        [TestMethod]
+        public void TestIsSummaCumLaude()
+        {
+            var student = students.First(s => s.Id == 1);
+            var result = tracker.HasGraduated(diploma, student);
+            Assert.IsTrue(result.Item1);
+            Assert.IsTrue(result.Item2 == Standing.SummaCumLaude);
+        }
     }
 }
